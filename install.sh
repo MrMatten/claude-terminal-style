@@ -94,7 +94,7 @@ mkdir -p "$HOME/.tmux/scripts" "$HOME/.claude/themes"
 install -m 0755 "$ROOT/tmux/claude-width.sh" "$HOME/.tmux/scripts/claude-width.sh"
 say "installed ~/.tmux/scripts/claude-width.sh"
 
-SLUG="$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1]))["name"].lower().replace(" ","-"))' "$ROOT/palette/nord.json")"
+SLUG="$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1]))["name"].lower().replace(" ","-"))' "$ROOT/palette/frappe.json")"
 cp "$ROOT/build/claude-theme.json" "$HOME/.claude/themes/$SLUG.json"
 say "installed ~/.claude/themes/$SLUG.json"
 

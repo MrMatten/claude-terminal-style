@@ -10,10 +10,17 @@ Everything is driven from one palette file. Re-running the installer is safe.
 - **Centres** a single-pane tmux window while `claude` runs in it, using two
   blank padding panes. Adaptive: a window at or below the target width is left
   full width, so laptops and small splits are unaffected.
-- **Darkens the pane background** while claude owns the window, lifting contrast
-  for everything on screen by roughly 18%. Applied independently of centring, so
-  a window too narrow to pad still gets it. Pane borders are painted to match, so
-  the padding stays seamless. Cleared when claude exits.
+- **Darkens the pane background** while claude owns the window, and pads the chat
+  block either side. Five panes when there is room:
+
+  ```
+  [ outer ][ inner ][ CHAT ][ inner ][ outer ]
+     surround   chat colour = the padding
+  ```
+
+  Borders are painted in the chat colour so the block has no seams. Degrades
+  gracefully: too narrow for inner pads drops to three panes, too narrow for any
+  padding keeps the background only. Cleared when claude exits.
 - **Recedes prose** so syntax-highlighted code, bold text and container-backed
   regions stand out by contrast, instead of trying to brighten everything.
 - **Themes the UI chrome** — your own messages get a background band, command

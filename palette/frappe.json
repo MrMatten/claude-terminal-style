@@ -1,0 +1,29 @@
+{
+  "name": "Frappe Chrome",
+  "description": "Catppuccin Frappe chrome for Claude Code. Backgrounds and UI colours are scoped to Claude; code colours come from the terminal's ANSI palette.",
+  "colors": {
+    "bg": "#303446",
+    "bg_alt": "#414559",
+    "bg_deep": "#292c3c",
+    "border": "#737994",
+    "border_accent": "#85c1dc",
+    "prose": "#b5bfe2",
+    "prose_subtle": "#838ba7",
+    "prose_faint": "#626880",
+    "accent": "#ca9ee6",
+    "info": "#8caaee",
+    "success": "#a6d189",
+    "error": "#e78284",
+    "warning": "#e5c890",
+    "code_inline": "#e5c890",
+    "bg_raised": "#51576d"
+  },
+  "layout": {
+    "text_width": 110,
+    "claude_background": "#303446",
+    "claude_surround": "#232634",
+    "terminal_foreground": "#f2d5cf",
+    "ghostty_theme": "TokyoNight Moon",
+    "pad_columns": 4
+  }
+}

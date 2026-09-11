@@ -7,7 +7,7 @@ Writes build/claude-theme.json, build/tmux.snippet.conf, build/ghostty.snippet.c
 import json, sys, pathlib
 
 root = pathlib.Path(__file__).resolve().parent
-src = pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else root / "palette" / "nord.json"
+src = pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else root / "palette" / "frappe.json"
 p = json.loads(src.read_text())
 c, L = p["colors"], p["layout"]
 out = root / "build"
@@ -31,11 +31,13 @@ theme = {
         "success":                     c["success"],
         "error":                      c["error"],
         "warning":                     c["warning"],
-        "userMessageBackground":      c["bg"],
-        "userMessageBackgroundHover": c["bg_alt"],
+        # must stay distinct from the chat pane background, which the tmux
+        # layer paints with colors.bg - otherwise the band is invisible
+        "userMessageBackground":      c["bg_alt"],
+        "userMessageBackgroundHover": c["bg_raised"],
         "bashMessageBackgroundColor": c["bg_deep"],
         "bashBorder":                 c["border_accent"],
-        "memoryBackgroundColor":      c["bg"],
+        "memoryBackgroundColor":      c["bg_alt"],
         "promptBorder":               c["border"],
     },
 }
@@ -51,6 +53,8 @@ slug = p["name"].lower().replace(" ", "-")
 # Reset one window with: prefix W
 set -g @claude-width {L["text_width"]}
 set -g @claude-bg "{L["claude_background"]}"
+set -g @claude-surround "{L["claude_surround"]}"
+set -g @claude-pad {L["pad_columns"]}
 set-hook -g after-select-window 'run-shell -b "~/.tmux/scripts/claude-width.sh sync #{{session_name}}:#{{window_index}}"'
 set-hook -g after-select-pane   'run-shell -b "~/.tmux/scripts/claude-width.sh sync #{{session_name}}:#{{window_index}}"'
 set-hook -g client-attached     'run-shell -b "~/.tmux/scripts/claude-width.sh sync #{{session_name}}:#{{window_index}}"'
