@@ -23,6 +23,10 @@ theme = {
         "subtle":                     c["prose_subtle"],
         "inactive":                   c["prose_faint"],
         "claude":                     c["accent"],
+        # `permission` is the ONLY themeable markdown element: the terminal
+        # renderer does `case "codespan": return Vo("permission", ...)`.
+        # It also colours permission prompts.
+        "permission":                 c["code_inline"],
         "suggestion":                 c["info"],
         "success":                     c["success"],
         "error":                      c["error"],
@@ -33,7 +37,6 @@ theme = {
         "bashBorder":                 c["border_accent"],
         "memoryBackgroundColor":      c["bg"],
         "promptBorder":               c["border"],
-        "secondaryBorder":            c["bg_alt"],
     },
 }
 slug = p["name"].lower().replace(" ", "-")
@@ -60,10 +63,16 @@ bind W run-shell '~/.tmux/scripts/claude-width.sh restore "#{{session_name}}:#{{
 # --- ghostty -----------------------------------------------------------------
 (out / "ghostty.snippet.conf").write_text(f"""\
 # >>> claude-terminal-style >>>
-# Claude Code highlights code with plain ANSI colour names, so the terminal
-# palette decides how code looks. This theme matches nvim (LazyVim tokyonight
-# style=moon), which uses truecolor and is unaffected by the ANSI palette.
+# Claude Code highlights fenced code blocks with plain ANSI colour NAMES, so the
+# terminal's 16-colour palette decides how code looks. This theme matches nvim
+# (LazyVim tokyonight style=moon), which uses truecolor and is unaffected by it.
 theme = {L["ghostty_theme"]}
+
+# Claude Code emits NO colour for assistant prose, so it renders in the terminal
+# default foreground. Dimming that is the only way to make prose recede, and it
+# is what separates prose from inline code (which is hardcoded to #b1b9f9 and
+# cannot be themed - see README). Must come after `theme`, which also sets fg.
+foreground = {L["terminal_foreground"]}
 # <<< claude-terminal-style <<<
 """)
 

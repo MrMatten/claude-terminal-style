@@ -83,26 +83,80 @@ does not change your editor.
 The plugin `syntaxHighlighting` component does **not** control colours; it
 registers extra highlight.js *grammars* (`{ hljsLanguages: [{id, remote, integrity}] }`).
 
-### What is not possible
+### What the theme can and cannot reach
 
-Claude Code's theme is a colour map. It has no tokens for markdown elements, so
-none of these can be styled by any known mechanism:
+Verified by static analysis of build 2.1.236. Two findings matter more than the
+token list.
 
-- vertical spacing / rhythm between blocks
-- headers (colour, weight, or level distinction)
-- inline-code backgrounds or "pill" treatment
-- fenced code block backgrounds and borders (bash/command blocks are the one
-  exception — `bashBorder` and `bashMessageBackgroundColor` exist)
-- table border colour, blockquote bars, list markers
-- clickable (OSC 8) links
-- font size anywhere — terminals are a single-size monospace grid
+**Assistant prose is never given a colour.** The markdown renderer emits no SGR
+foreground for paragraphs or headings:
 
-Recede `text` rather than fight it: everything that *is* coloured then reads as
-distinct without needing its own token.
+```js
+case "paragraph": return htn((e.tokens ?? []).map(p => c3(p, t, {...})).join("")) + jU;
+case "text":      { ... return iaw(saw(e, t, r), t, r, n) }   // iaw is identity
+```
+
+So prose renders in the **terminal's default foreground**, and the `text` theme
+token cannot dim it. `text` does still colour the message bullet, the composer,
+and your own echoed prompt. Dim prose by setting the terminal's `foreground`.
+
+**Inline code cannot be themed - this is a bug.** The renderer picks the right
+token name, then resolves it against the *un-overridden* built-in palette:
+
+```js
+case "codespan": return Vo("permission", t)(e.text);
+
+function Vo(e, t, r = "foreground") { return (n) => {
+  if (e.startsWith("rgb(") || e.startsWith("#") || ...) return Lmt(n, e, r);
+  return Lmt(n, oae(t)[e], r);        // oae() only knows the six built-in bases
+}}
+```
+
+`t` is the *base name* ("dark"), not the merged theme, so a custom `permission`
+override is parsed, validated, stored - and never consulted. Inline code is
+effectively hardcoded to `rgb(177,185,249)` on every base (confirmed present in
+both `jcS` and `BcS`). Switching base to `dark-ansi` does **not** help.
+
+The practical consequence: inline code is fixed at `#b1b9f9`, so the only way to
+make it stand out is to dim the terminal foreground beneath it. At the default
+`#c8d3f5` the contrast is 1.26:1 (invisible); at `#8b93b8` it is 1.61:1.
+
+**The syntax theme is not selectable.** Its name is a pure function of the base:
+
+```js
+function Yiw(e){ if(e.includes("ansi")) return "ansi";
+                 if(e.includes("dark")) return "Monokai Extended";
+                 return "GitHub" }
+```
+
+There is no `syntaxTheme` setting; `syntaxHighlightingDisabled` is a kill switch
+only. Importantly, the "Syntax theme: ..." line in the `/theme` picker describes
+the **diff preview shown above it**, not chat code blocks. The two are disjoint:
+
+| surface | colour source | emission |
+|---|---|---|
+| fenced blocks in chat | hardcoded hljs→chalk map | basic ANSI → your terminal's 16 colours |
+| diffs and file reads | Monokai / GitHub / ansi RGB maps | 24-bit truecolor |
+
+That is why setting the terminal palette makes chat code match your editor, and
+why diffs do not follow it.
+
+**Still not reachable by any mechanism:** vertical spacing between blocks,
+heading colour or size, code-block backgrounds and borders, table border colour,
+blockquote bars, list markers, and font size (terminals are one size).
 
 ### Theme tokens
 
-Verified against the running binary and working theme files:
+The base theme exposes 144 keys. An override whose key is not one of them is
+**silently dropped** - the theme still loads, that key just does nothing:
+
+```js
+let l = oae(base);                                // the base theme's colour map
+for (let [k, v] of Object.entries(overrides))
+  if (Object.hasOwn(l, k) && isValidColour(v)) out[k] = v;
+```
+
+The ones worth setting:
 
 ```
 text  subtle  inactive  inverseText  claude  success  error  warning
