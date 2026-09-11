@@ -23,10 +23,17 @@
     "claude_background": "#303446",
     "claude_surround": "#232634",
     "terminal_foreground": "#c6d0f5",
-    "ghostty_theme": "TokyoNight Moon",
+    "ghostty_theme": "Catppuccin Frappe",
     "pad_columns": 4,
     "theme_base": "light",
-    "inline_code_ansi12": "#ef9f76",
-    "inline_code_index105": "#ef9f76"
+    "bold_color": "#e9edfb",
+    "index_remaps": {
+      "105": "#ef9f76",
+      "145": "#838ba7",
+      "183": "#ca9ee6",
+      "217": "#e78284",
+      "151": "#a6d189",
+      "152": "#85c1dc"
+    }
   }
 }

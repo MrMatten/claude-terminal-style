@@ -91,15 +91,13 @@ theme = {L["ghostty_theme"]}
 # Must come after `theme`, which also sets the foreground.
 foreground = {L["terminal_foreground"]}
 
-# Inline code resolves to `ansi:blueBright` on this theme base, i.e. palette slot
-# 12. The syntax highlighter only uses the NORMAL slots, so 12 is free to
-# repurpose. This is the only way to colour inline code at all.
-palette = 12={L["inline_code_ansi12"]}
+# Claude Code quantises its colours to the 256-palette inside tmux, and specific
+# UI elements land on specific indices (measured on 2.1.236 - re-verify after an
+# upgrade with: tmux capture-pane -p -e | grep -o $'\\x1b\\[38;5;[0-9]*m' | sort | uniq -c).
+# Remapping those indices is the only way to colour these elements at all.
+{chr(10).join(f"palette = {k}={v}" for k, v in sorted(L["index_remaps"].items(), key=lambda x: int(x[0])))}
 
-# With truecolor unavailable, Claude Code quantises to the 256-palette and inline
-# code lands on index 105 (measured - nothing else uses it). Setting both covers
-# either case.
-palette = 105={L["inline_code_index105"]}
+bold-color = {L["bold_color"]}
 # <<< claude-terminal-style <<<
 """)
 
