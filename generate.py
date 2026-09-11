@@ -71,7 +71,12 @@ theme = {L["ghostty_theme"]}
 # Claude Code emits NO colour for assistant prose, so it renders in the terminal
 # default foreground. Dimming that is the only way to make prose recede, and it
 # is what separates prose from inline code (which is hardcoded to #b1b9f9 and
-# cannot be themed - see README). Must come after `theme`, which also sets fg.
+# cannot be themed - see README). Warm rather than blue-grey: inline code is a
+# cool periwinkle, so hue separation does far more work than brightness. Chosen
+# by maximising the MINIMUM deltaE to every colour that appears in code
+# (periwinkle, keyword blue, cyan, green, red, yellow) - a warm sand scores
+# better against inline code but collides with the yellow used for functions.
+# Must come after `theme`, which also sets the foreground.
 foreground = {L["terminal_foreground"]}
 # <<< claude-terminal-style <<<
 """)
