@@ -25,7 +25,7 @@
     "terminal_foreground": "#d6def9",
     "ghostty_theme": "Catppuccin Frappe",
     "pad_columns": 4,
-    "theme_base": "light",
+    "theme_base": "dark-ansi",
     "bold_color": "#f4dfd4",
     "index_remaps": {
       "105": "#ef9f76",
@@ -35,7 +35,8 @@
       "152": "#85c1dc",
       "103": "#838ba7",
       "187": "#e5c890",
-      "37": "#737994"
+      "37": "#737994",
+      "153": "#ef9f76"
     }
   }
 }
