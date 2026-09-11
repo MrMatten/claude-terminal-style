@@ -17,7 +17,9 @@ out.mkdir(exist_ok=True)
 # Only tokens verified against the running binary and working theme files.
 theme = {
     "name": p["name"],
-    "base": "dark",
+    # This base stores `permission` as ansi:blueBright, which is the ONLY way to
+    # make inline code themeable - see README.
+    "base": L.get("theme_base", "dark"),
     "overrides": {
         "text":                       c["prose"],
         "subtle":                     c["prose_subtle"],
@@ -51,6 +53,11 @@ slug = p["name"].lower().replace(" ", "-")
 # text in a @claude-width column. Adaptive - a window at or below that width is
 # left full width. Never touches a window you have split.
 # Reset one window with: prefix W
+# Claude Code quantises colours to the 256-palette unless chalk reports level 3.
+# TERM inside tmux is screen/tmux-256color, which caps it there even when
+# COLORTERM=truecolor, so force it. Without this every theme hex is rounded.
+set-environment -g FORCE_COLOR 3
+
 set -g @claude-width {L["text_width"]}
 set -g @claude-bg "{L["claude_background"]}"
 set -g @claude-surround "{L["claude_surround"]}"
@@ -83,6 +90,16 @@ theme = {L["ghostty_theme"]}
 # better against inline code but collides with the yellow used for functions.
 # Must come after `theme`, which also sets the foreground.
 foreground = {L["terminal_foreground"]}
+
+# Inline code resolves to `ansi:blueBright` on this theme base, i.e. palette slot
+# 12. The syntax highlighter only uses the NORMAL slots, so 12 is free to
+# repurpose. This is the only way to colour inline code at all.
+palette = 12={L["inline_code_ansi12"]}
+
+# With truecolor unavailable, Claude Code quantises to the 256-palette and inline
+# code lands on index 105 (measured - nothing else uses it). Setting both covers
+# either case.
+palette = 105={L["inline_code_index105"]}
 # <<< claude-terminal-style <<<
 """)
 

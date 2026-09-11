@@ -7,7 +7,7 @@
     "bg_deep": "#292c3c",
     "border": "#737994",
     "border_accent": "#85c1dc",
-    "prose": "#b5bfe2",
+    "prose": "#c6d0f5",
     "prose_subtle": "#838ba7",
     "prose_faint": "#626880",
     "accent": "#ca9ee6",
@@ -22,8 +22,11 @@
     "text_width": 110,
     "claude_background": "#303446",
     "claude_surround": "#232634",
-    "terminal_foreground": "#f2d5cf",
+    "terminal_foreground": "#c6d0f5",
     "ghostty_theme": "TokyoNight Moon",
-    "pad_columns": 4
+    "pad_columns": 4,
+    "theme_base": "light",
+    "inline_code_ansi12": "#ef9f76",
+    "inline_code_index105": "#ef9f76"
   }
 }

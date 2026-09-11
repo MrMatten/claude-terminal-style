@@ -112,7 +112,27 @@ So prose renders in the **terminal's default foreground**, and the `text` theme
 token cannot dim it. `text` does still colour the message bullet, the composer,
 and your own echoed prompt. Dim prose by setting the terminal's `foreground`.
 
-**Inline code cannot be themed - this is a bug.** The renderer picks the right
+**Inline code is themeable, but only through the terminal palette.** The theme
+token is a dead end; measuring what actually reaches the terminal is what works.
+
+The renderer picks the right token name, then resolves it against the
+*un-overridden* built-in palette, so a custom `permission` override never
+applies. But Claude Code quantises colours to the 256-palette (chalk reports
+level 2 under `TERM=screen-256color`, even with `COLORTERM=truecolor`), and
+inline code lands on **index 105** - used by nothing else. Remap it:
+
+```
+palette = 105=#ef9f76
+```
+
+Verify on your own build before trusting the index, by reading what is actually
+emitted rather than inferring it:
+
+```sh
+tmux capture-pane -p -e | grep -o $'\x1b\[38;5;[0-9]*m' | sort | uniq -c
+```
+
+The original static analysis, kept because the mechanism is still true: The renderer picks the right
 token name, then resolves it against the *un-overridden* built-in palette:
 
 ```js
