@@ -16,7 +16,7 @@ target=${2:-}
 [ -n "$target" ] || exit 0
 
 width=$(tmux show-options -gqv @claude-width 2>/dev/null); [ -n "$width" ] || width=100
-padbg=$(tmux show-options -gqv @claude-pad-bg 2>/dev/null); [ -n "$padbg" ] || padbg="#222436"
+bg=$(tmux show-options -gqv @claude-bg 2>/dev/null); [ -n "$bg" ] || bg="#16161e"
 
 get() { tmux display-message -p -t "$target" "$1" 2>/dev/null; }
 PADCMD='printf "\033[?25l"; exec cat'
@@ -79,9 +79,26 @@ add_pads() {
   rp=$(tmux split-window -h    -d -l "$right" -t "$pane" -P -F '#{pane_id}' "$PADCMD" 2>/dev/null) || true
   [ -n "$rp" ] && tmux set-option -p -t "$rp" @claude-pad 1
 
-  tmux set-option -w -t "$target" pane-border-style        "fg=$padbg"
-  tmux set-option -w -t "$target" pane-active-border-style "fg=$padbg"
   tmux set-option -w -t "$target" @claude-narrowed 1
+}
+
+# Darken the whole window and paint the pane borders to match, so the padding
+# panes are seamless. Applied whenever claude owns the window, independent of
+# whether the window is wide enough to actually pad.
+style_on() {
+  tmux set-option -w -t "$target" window-style             "bg=$bg"
+  tmux set-option -w -t "$target" window-active-style      "bg=$bg"
+  tmux set-option -w -t "$target" pane-border-style        "fg=$bg"
+  tmux set-option -w -t "$target" pane-active-border-style "fg=$bg"
+  tmux set-option -w -t "$target" @claude-styled 1
+}
+style_off() {
+  [ "$(tmux show-options -qv -w -t "$target" @claude-styled 2>/dev/null)" = "1" ] || return 0
+  tmux set-option -w -t "$target" -u window-style
+  tmux set-option -w -t "$target" -u window-active-style
+  tmux set-option -w -t "$target" -u pane-border-style
+  tmux set-option -w -t "$target" -u pane-active-border-style
+  tmux set-option -w -t "$target" -u @claude-styled
 }
 
 drop_pads() {
@@ -90,8 +107,6 @@ drop_pads() {
   for p in $(tmux list-panes -t "$target" -F '#{pane_id}|#{@claude-pad}' 2>/dev/null | awk -F'|' '$2=="1"{print $1}'); do
     tmux kill-pane -t "$p" 2>/dev/null
   done
-  tmux set-option -w -t "$target" -u pane-border-style
-  tmux set-option -w -t "$target" -u pane-active-border-style
   tmux set-option -w -t "$target" -u @claude-narrowed
 }
 
@@ -105,15 +120,18 @@ wants_centre() {
 
 case "$mode" in
   apply)
+    style_on
     is_padded && exit 0
     add_pads || true
     ;;
   restore)
     drop_pads
+    style_off
     ;;
   sync)
     settle
     if wants_centre; then
+      style_on
       if is_padded; then
         # already centred - correct the width if the window was resized
         cw=$(real_panes | cut -d'|' -f4)
@@ -126,6 +144,7 @@ case "$mode" in
       fi
     else
       drop_pads
+      style_off
     fi
     ;;
 esac

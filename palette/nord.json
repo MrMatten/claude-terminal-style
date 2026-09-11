@@ -19,8 +19,8 @@
   },
   "layout": {
     "text_width": 100,
-    "pad_background": "#222436",
-    "ghostty_theme": "TokyoNight Moon",
-    "terminal_foreground": "#c7b8b0"
+    "claude_background": "#16161e",
+    "terminal_foreground": "#c7b8b0",
+    "ghostty_theme": "TokyoNight Moon"
   }
 }

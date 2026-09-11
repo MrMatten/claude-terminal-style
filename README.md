@@ -10,6 +10,10 @@ Everything is driven from one palette file. Re-running the installer is safe.
 - **Centres** a single-pane tmux window while `claude` runs in it, using two
   blank padding panes. Adaptive: a window at or below the target width is left
   full width, so laptops and small splits are unaffected.
+- **Darkens the pane background** while claude owns the window, lifting contrast
+  for everything on screen by roughly 18%. Applied independently of centring, so
+  a window too narrow to pad still gets it. Pane borders are painted to match, so
+  the padding stays seamless. Cleared when claude exits.
 - **Recedes prose** so syntax-highlighted code, bold text and container-backed
   regions stand out by contrast, instead of trying to brighten everything.
 - **Themes the UI chrome** — your own messages get a background band, command
@@ -42,9 +46,10 @@ Edit `palette/nord.json`, then re-run `./install.sh`.
 {
   "colors": { "prose": "#a9b1d6", "accent": "#88c0d0", ... },
   "layout": {
-    "text_width":     100,               // centre above this, full width at or below
-    "pad_background": "#222436",         // padding pane colour; match your terminal bg
-    "ghostty_theme":  "TokyoNight Moon"  // decides how CODE looks (see below)
+    "text_width":          100,               // centre above this, full width at or below
+    "claude_background":   "#16161e",         // pane background while claude runs
+    "terminal_foreground": "#c7b8b0",         // prose; see "What the theme can reach"
+    "ghostty_theme":       "TokyoNight Moon"  // decides how CODE looks (see below)
   }
 }
 ```
